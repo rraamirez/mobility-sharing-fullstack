@@ -17,6 +17,8 @@ import userService from "../services/userService";
 import userTravelService from "../services/userTravelService";
 import { useFocusEffect, useRouter } from "expo-router";
 import MapPreview from "../components/MapPreview";
+import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Search() {
   const [origin, setOrigin] = useState("");
@@ -26,6 +28,7 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<UserModel | null>(null);
+  const { t } = useLanguage();
   const router = useRouter();
 
   const [selectedTravel, setSelectedTravel] = useState<TravelModel | null>(
@@ -67,35 +70,35 @@ export default function Search() {
   };
 
   const bookTravel = async (travelId: number, price: number) => {
-    if (!user) return console.error("User not found.");
+    if (!user) return console.error(t("search.userNotFound"));
     if (price > user.rupeeWallet) {
-      return alert("Insufficient funds in wallet. Please recharge.");
+      return alert(t("search.noFunds"));
     }
     const data = await userTravelService.bookTravel(travelId, user.id);
     if (data) {
       alert(
-        "Travel booked successfully! We will notify you when the driver decides."
+        t("search.booked")
       );
       router.replace("/trips");
     } else {
-      console.error("Failed to book travel.");
+      console.error(t("search.bookingFailed"));
     }
   };
 
   const bookAllTravels = async (group: TravelModel[]) => {
     const total = group.reduce((sum, t) => sum + t.price, 0);
-    if (!user) return alert("User not found.");
+    if (!user) return alert(t("search.userNotFound"));
     if (total > user.rupeeWallet) {
-      return alert("Insufficient funds in wallet. Please recharge.");
+      return alert(t("search.noFunds"));
     }
     try {
       for (const t of group) {
         await userTravelService.bookTravel(t.id, user.id);
       }
-      alert("All travels booked successfully!");
+      alert(t("search.allBooked"));
       router.replace("/trips");
     } catch (err) {
-      alert("Failed to book all travels.");
+      alert(t("search.bookingFailed"));
       console.error(err);
     }
   };
@@ -110,7 +113,8 @@ export default function Search() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.slogan}>It's your moment. Take the ride.</Text>
+      <LanguageSelector />
+      <Text style={styles.slogan}>{t("search.slogan")}</Text>
 
       <Ionicons
         name="map-outline"
@@ -121,7 +125,7 @@ export default function Search() {
 
       <TextInput
         style={styles.searchInput}
-        placeholder="Enter origin..."
+        placeholder={t("search.originPlaceholder")}
         placeholderTextColor="#aaa"
         value={origin}
         onChangeText={setOrigin}
@@ -130,7 +134,7 @@ export default function Search() {
 
       <TextInput
         style={styles.searchInput}
-        placeholder="Enter destination..."
+        placeholder={t("search.destinationPlaceholder")}
         placeholderTextColor="#aaa"
         value={destination}
         onChangeText={setDestination}
@@ -178,7 +182,7 @@ export default function Search() {
                     style={styles.bookAllButton}
                     onPress={() => bookAllTravels(group)}
                   >
-                    <Text style={styles.bookAllButtonText}>Book All</Text>
+                    <Text style={styles.bookAllButtonText}>{t("search.bookAll")}</Text>
                   </TouchableOpacity>
                 </TouchableOpacity>
 
@@ -225,7 +229,7 @@ export default function Search() {
                             style={styles.bookButton}
                             onPress={() => bookTravel(item.id, item.price)}
                           >
-                            <Text style={styles.bookButtonText}>Book Now</Text>
+                            <Text style={styles.bookButtonText}>{t("search.bookNow")}</Text>
                           </TouchableOpacity>
                           <TouchableOpacity
                             style={styles.viewMapButton}
@@ -238,12 +242,12 @@ export default function Search() {
                               ) {
                                 setSelectedTravel(item);
                               } else {
-                                alert("Map coordinates are not available.");
+                                alert(t("search.noCoordinates"));
                               }
                             }}
                           >
                             <Text style={styles.viewMapButtonText}>
-                              View Map
+                              {t("search.viewMap")}
                             </Text>
                           </TouchableOpacity>
                         </View>
@@ -305,7 +309,7 @@ export default function Search() {
                     style={styles.bookButton}
                     onPress={() => bookTravel(group[0].id, group[0].price)}
                   >
-                    <Text style={styles.bookButtonText}>Book Now</Text>
+                    <Text style={styles.bookButtonText}>{t("search.bookNow")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.viewMapButton}
@@ -318,11 +322,11 @@ export default function Search() {
                       ) {
                         setSelectedTravel(group[0]);
                       } else {
-                        alert("Map coordinates are not available.");
+                        alert(t("search.noCoordinates"));
                       }
                     }}
                   >
-                    <Text style={styles.viewMapButtonText}>View Map</Text>
+                    <Text style={styles.viewMapButtonText}>{t("search.viewMap")}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -331,7 +335,7 @@ export default function Search() {
         )}
         ListEmptyComponent={
           !loading ? (
-            <Text style={styles.noResultsText}>No trips available</Text>
+            <Text style={styles.noResultsText}>{t("search.noTrips")}</Text>
           ) : null
         }
       />
@@ -353,8 +357,8 @@ export default function Search() {
                   latitude: selectedTravel.latitudeDestination!,
                   longitude: selectedTravel.longitudeDestination!,
               }}
-              originTitle="Origin"
-              destinationTitle="Destination"
+              originTitle={t("common.origin")}
+              destinationTitle={t("common.destination")}
               showTiles
             />
           )}
@@ -362,7 +366,7 @@ export default function Search() {
             style={styles.closeButton}
             onPress={() => setSelectedTravel(null)}
           >
-            <Text style={styles.closeButtonText}>Close</Text>
+            <Text style={styles.closeButtonText}>{t("common.close")}</Text>
           </TouchableOpacity>
         </View>
       </Modal>

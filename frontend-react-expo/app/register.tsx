@@ -9,6 +9,8 @@ import {
 import { useAuth } from "./context/AuthContext";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router";
+import LanguageSelector from "./components/LanguageSelector";
+import { useLanguage } from "./context/LanguageContext";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -16,6 +18,7 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { register } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const isFormValid = name && email && username && password;
@@ -27,11 +30,11 @@ export default function Register() {
         alert(response.message);
         return;
       } else {
-        alert("Registration successful!");
+        alert(t("auth.registerSuccess"));
         router.replace("/");
       }
     } catch {
-      alert("Registration failed. Please try again.");
+      alert(t("auth.registerFailed"));
     }
   };
 
@@ -39,21 +42,20 @@ export default function Register() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        <Text style={styles.subtitle}>
-          Join the movement. Drive the future.
-        </Text>
-        <Text style={styles.title}>Create Account</Text>
+        <LanguageSelector />
+        <Text style={styles.subtitle}>{t("auth.registerTagline")}</Text>
+        <Text style={styles.title}>{t("auth.createAccount")}</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Full Name"
+          placeholder={t("auth.name")}
           placeholderTextColor="#aaa"
           value={name}
           onChangeText={setName}
         />
         <TextInput
           style={styles.input}
-          placeholder="Email"
+          placeholder={t("auth.email")}
           placeholderTextColor="#aaa"
           value={email}
           onChangeText={setEmail}
@@ -62,7 +64,7 @@ export default function Register() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Username"
+          placeholder={t("auth.username")}
           placeholderTextColor="#aaa"
           value={username}
           onChangeText={setUsername}
@@ -70,7 +72,7 @@ export default function Register() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Password"
+          placeholder={t("auth.password")}
           placeholderTextColor="#aaa"
           value={password}
           onChangeText={setPassword}
@@ -82,14 +84,14 @@ export default function Register() {
           disabled={!isFormValid}
           onPress={handleRegister}
         >
-          <Text style={styles.buttonText}>Sign Up</Text>
+          <Text style={styles.buttonText}>{t("auth.signUp")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.registerButton}
           onPress={() => router.replace("/")}
         >
           <Text style={styles.registerText}>
-            Already have an account? Log in
+            {t("auth.alreadyHaveAccount")}
           </Text>
         </TouchableOpacity>
       </View>

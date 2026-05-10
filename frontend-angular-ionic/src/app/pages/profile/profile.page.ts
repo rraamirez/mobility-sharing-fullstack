@@ -14,6 +14,8 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/angular/standalone";
+import { I18nService } from "../../core/i18n/i18n.service";
+import { LanguageSelectorComponent } from "../../core/i18n/language-selector.component";
 import { User, WeeklyEnvironmentalStats } from "../../core/models/domain.models";
 import { AuthService } from "../../core/services/auth.service";
 import { UserService } from "../../core/services/user.service";
@@ -33,12 +35,14 @@ import { UserService } from "../../core/services/user.service";
     IonItem,
     IonLabel,
     IonTitle,
-    IonToolbar
+    IonToolbar,
+    LanguageSelectorComponent
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Profile</ion-title>
+        <ion-title class="toolbar-title">{{ i18n.t("profile.title") }}</ion-title>
+        <app-language-selector slot="end"></app-language-selector>
       </ion-toolbar>
     </ion-header>
 
@@ -47,23 +51,23 @@ import { UserService } from "../../core/services/user.service";
         <ion-card *ngIf="user">
           <ion-card-content class="stack">
             <h2>{{ user.username }}</h2>
-            <p class="pill">{{ user.ecoRank?.name || "EcoRank pendiente" }}</p>
+            <p class="pill">{{ user.ecoRank?.name || "EcoRank" }}</p>
             <ion-item>
-              <ion-label position="stacked">Name</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.name") }}</ion-label>
               <ion-input [(ngModel)]="form.name"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Email</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.email") }}</ion-label>
               <ion-input [(ngModel)]="form.email"></ion-input>
             </ion-item>
-            <ion-button expand="block" (click)="save()">Save Changes</ion-button>
-            <ion-button expand="block" color="danger" fill="outline" (click)="logout()">Sign Out</ion-button>
+            <ion-button expand="block" (click)="save()">{{ i18n.t("profile.save") }}</ion-button>
+            <ion-button expand="block" color="danger" fill="outline" (click)="logout()">{{ i18n.t("profile.signOut") }}</ion-button>
           </ion-card-content>
         </ion-card>
 
         <ion-card>
           <ion-card-content class="stack">
-            <h2>Weekly Impact</h2>
+            <h2>{{ i18n.t("profile.weeklyImpact") }}</h2>
             <pre>{{ stats | json }}</pre>
           </ion-card-content>
         </ion-card>
@@ -90,7 +94,8 @@ export class ProfilePage implements OnInit {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    readonly i18n: I18nService
   ) {}
 
   ngOnInit(): void {
@@ -115,10 +120,10 @@ export class ProfilePage implements OnInit {
 
     this.userService.update({ ...this.user, ...this.form }).subscribe({
       next: async () => {
-        await this.showMessage("Profile updated.");
+        await this.showMessage(this.i18n.t("profile.updated"));
         this.load();
       },
-      error: () => void this.showMessage("The profile could not be saved.")
+      error: () => void this.showMessage(this.i18n.t("profile.saveFailed"))
     });
   }
 
@@ -127,7 +132,7 @@ export class ProfilePage implements OnInit {
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "Profile", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: this.i18n.t("profile.title"), message, buttons: ["OK"] });
     await alert.present();
   }
 }

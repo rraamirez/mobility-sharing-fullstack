@@ -20,6 +20,8 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/angular/standalone";
+import { I18nService } from "../../core/i18n/i18n.service";
+import { LanguageSelectorComponent } from "../../core/i18n/language-selector.component";
 import { Travel, User } from "../../core/models/domain.models";
 import { TravelService } from "../../core/services/travel.service";
 import { UserService } from "../../core/services/user.service";
@@ -46,12 +48,14 @@ import { UserTravelService } from "../../core/services/user-travel.service";
     IonList,
     IonSpinner,
     IonTitle,
-    IonToolbar
+    IonToolbar,
+    LanguageSelectorComponent
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Search Trips</ion-title>
+        <ion-title class="toolbar-title">{{ i18n.t("search.title") }}</ion-title>
+        <app-language-selector slot="end"></app-language-selector>
       </ion-toolbar>
     </ion-header>
 
@@ -60,28 +64,28 @@ import { UserTravelService } from "../../core/services/user-travel.service";
         <ion-card>
           <ion-card-content class="split-grid">
             <ion-item>
-              <ion-label position="stacked">Origin</ion-label>
+              <ion-label position="stacked">{{ i18n.t("search.origin") }}</ion-label>
               <ion-input [(ngModel)]="origin" placeholder="Granada"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Destination</ion-label>
-              <ion-input [(ngModel)]="destination" placeholder="Opcional"></ion-input>
+              <ion-label position="stacked">{{ i18n.t("search.destination") }}</ion-label>
+              <ion-input [(ngModel)]="destination"></ion-input>
             </ion-item>
             <ion-button expand="block" (click)="search()" [disabled]="loading || !origin.trim()">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Search</span>
+              <span *ngIf="!loading">{{ i18n.t("search.search") }}</span>
             </ion-button>
           </ion-card-content>
         </ion-card>
 
-        <p class="muted" *ngIf="!loading && groups.length === 0">No results yet.</p>
+        <p class="muted" *ngIf="!loading && groups.length === 0">{{ i18n.t("search.noResults") }}</p>
 
         <ion-list>
           <ion-card class="trip-card" *ngFor="let group of groups">
             <ion-card-header>
               <ion-card-title>{{ group[0].origin }} -> {{ group[0].destination }}</ion-card-title>
               <p class="muted">
-                Driver: {{ group[0].driver.name || group[0].driver.username }}
+                {{ i18n.t("search.driver") }}: {{ group[0].driver.name || group[0].driver.username }}
                 <span *ngIf="group[0].driver.rating"> · {{ group[0].driver.rating }}/5</span>
               </p>
             </ion-card-header>
@@ -95,11 +99,11 @@ import { UserTravelService } from "../../core/services/user-travel.service";
                   </ion-badge>
                 </div>
                 <ion-buttons>
-                  <ion-button fill="solid" (click)="book(travel)">Book</ion-button>
+                  <ion-button fill="solid" (click)="book(travel)">{{ i18n.t("search.book") }}</ion-button>
                 </ion-buttons>
               </article>
               <ion-button fill="outline" (click)="bookAll(group)" *ngIf="group.length > 1">
-                Book full group
+                {{ i18n.t("search.bookFullGroup") }}
               </ion-button>
             </ion-card-content>
           </ion-card>
@@ -140,7 +144,8 @@ export class SearchPage implements OnInit {
     private readonly travelService: TravelService,
     private readonly userService: UserService,
     private readonly userTravelService: UserTravelService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    readonly i18n: I18nService
   ) {}
 
   ngOnInit(): void {
@@ -156,25 +161,25 @@ export class SearchPage implements OnInit {
       },
       error: async () => {
         this.loading = false;
-        await this.showMessage("Trips could not be loaded for that search.");
+        await this.showMessage(this.i18n.t("search.loadFailed"));
       }
     });
   }
 
   async book(travel: Travel): Promise<void> {
     if (!this.user) {
-      await this.showMessage("Your user could not be loaded.");
+      await this.showMessage(this.i18n.t("search.userLoadFailed"));
       return;
     }
 
     if (travel.price > this.user.rupeeWallet) {
-      await this.showMessage("Insufficient wallet balance.");
+      await this.showMessage(this.i18n.t("search.insufficientBalance"));
       return;
     }
 
     this.userTravelService.book(travel.id, this.user.id).subscribe({
-      next: () => void this.showMessage("Request sent to the driver."),
-      error: () => void this.showMessage("This trip could not be booked.")
+      next: () => void this.showMessage(this.i18n.t("search.requestSent")),
+      error: () => void this.showMessage(this.i18n.t("search.bookFailed"))
     });
   }
 

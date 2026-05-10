@@ -17,6 +17,8 @@ import { UserModel } from "../models/Users";
 import travelService from "../services/travelService";
 import MapPreview from "../components/MapPreview";
 import DateTimeField from "../components/DateTimeField";
+import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Publish() {
   const [origin, setOrigin] = useState("");
@@ -30,6 +32,7 @@ export default function Publish() {
   );
   const [isRecurring, setIsRecurring] = useState(false);
   const [user, setUser] = useState<UserModel | null>(null);
+  const { t } = useLanguage();
 
   const router = useRouter();
 
@@ -52,7 +55,7 @@ export default function Publish() {
     setShowMapModal(false);
 
     if (!address || !arrivalAddress) {
-      alert("Please enter both addresses");
+      alert(t("publish.enterBothAddresses"));
       return;
     }
 
@@ -77,15 +80,15 @@ export default function Publish() {
         const latOrigin = parseFloat(dataOrigin[0].lat);
         const lonOrigin = parseFloat(dataOrigin[0].lon);
         setCoordinates({ latitude: latOrigin, longitude: lonOrigin });
-      } else alert("Origin address not found.");
+      } else alert(t("publish.originNotFound"));
 
       if (dataArrival.length > 0) {
         const latArrival = parseFloat(dataArrival[0].lat);
         const lonArrival = parseFloat(dataArrival[0].lon);
         setArrivalCoordinates({ latitude: latArrival, longitude: lonArrival });
-      } else alert("Arrival address not found.");
+      } else alert(t("publish.arrivalNotFound"));
     } catch (error) {
-      alert("Error fetching coordinates");
+      alert(t("publish.coordinatesError"));
     }
     setLoading(false);
   };
@@ -139,7 +142,7 @@ export default function Publish() {
       (isRecurring && !endDate) ||
       !time
     ) {
-      alert("Please fill in all fields");
+      alert(t("publish.fillAllFields"));
       return;
     }
 
@@ -184,11 +187,12 @@ export default function Publish() {
       style={styles.scrollContainer}
       contentContainerStyle={styles.container}
     >
-      <Text style={styles.slogan}>Post a Trip</Text>
+      <LanguageSelector />
+      <Text style={styles.slogan}>{t("publish.title")}</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Origin"
+        placeholder={t("common.origin")}
         placeholderTextColor="#bbb"
         value={origin}
         onChangeText={setOrigin}
@@ -196,7 +200,7 @@ export default function Publish() {
 
       <TextInput
         style={styles.input}
-        placeholder="Destination"
+        placeholder={t("common.destination")}
         placeholderTextColor="#bbb"
         value={destination}
         onChangeText={setDestination}
@@ -204,7 +208,7 @@ export default function Publish() {
 
       <TextInput
         style={styles.input}
-        placeholder="Price"
+        placeholder={t("common.price")}
         placeholderTextColor="#bbb"
         keyboardType="numeric"
         value={price}
@@ -214,7 +218,7 @@ export default function Publish() {
       <View style={styles.row}>
         <TextInput
           style={[styles.input, styles.flex]}
-          placeholder="Example: Calle Cerro del Oro 60, Granada"
+          placeholder={t("publish.addressExample")}
           value={address}
           onChangeText={setAddress}
         />
@@ -225,13 +229,13 @@ export default function Publish() {
             setCoordinates(null);
           }}
         >
-          <Text style={styles.resetButtonText}>Reset</Text>
+          <Text style={styles.resetButtonText}>{t("common.reset")}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
         <TextInput
           style={[styles.input, styles.flex]}
-          placeholder="Example: Calle Gran Capitan 5, Granada"
+          placeholder={t("publish.arrivalAddressExample")}
           value={arrivalAddress}
           onChangeText={setArrivalAddress}
         />
@@ -242,25 +246,25 @@ export default function Publish() {
             setArrivalCoordinates(null);
           }}
         >
-          <Text style={styles.resetButtonText}>Reset</Text>
+          <Text style={styles.resetButtonText}>{t("common.reset")}</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.mapControls}>
         <TouchableOpacity style={styles.mapButton} onPress={fetchCoordinates}>
-          <Text style={styles.buttonText}>Get Coordinates</Text>
+          <Text style={styles.buttonText}>{t("publish.getCoordinates")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.mapButton}
           onPress={() => {
             if (!coordinates || !arrivalCoordinates) {
-              alert("Please get coordinates first");
+              alert(t("publish.coordinatesFirst"));
               return;
             }
             setShowMapModal(true);
           }}
         >
-          <Text style={styles.mapButtonText}>Explore Fullscreen Map</Text>
+          <Text style={styles.mapButtonText}>{t("publish.fullscreenMap")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -274,8 +278,8 @@ export default function Publish() {
             style={styles.map}
             origin={coordinates}
             destination={arrivalCoordinates}
-            originTitle="Origin"
-            destinationTitle="Destination"
+            originTitle={t("common.origin")}
+            destinationTitle={t("common.destination")}
             originDescription={address}
             destinationDescription={arrivalAddress}
           />
@@ -288,8 +292,8 @@ export default function Publish() {
             style={styles.modalMap}
             origin={coordinates || { latitude: 40.4168, longitude: -3.7038 }}
             destination={arrivalCoordinates}
-            originTitle="Origin"
-            destinationTitle="Destination"
+            originTitle={t("common.origin")}
+            destinationTitle={t("common.destination")}
             originDescription={address}
             destinationDescription={arrivalAddress}
           />
@@ -297,7 +301,7 @@ export default function Publish() {
             onPress={() => setShowMapModal(false)}
             style={styles.closeButton}
           >
-            <Text>Close</Text>
+            <Text>{t("common.close")}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -314,7 +318,7 @@ export default function Publish() {
         }}
       />
       <Text style={styles.label}>
-        {isRecurring ? "Recurring Trip" : "One-time Trip"}
+        {isRecurring ? t("publish.recurringTrip") : t("publish.oneTimeTrip")}
       </Text>
 
       <TouchableOpacity
@@ -324,7 +328,7 @@ export default function Publish() {
         <Text style={styles.inputText}>
           {startDate
             ? startDate.toISOString().split("T")[0]
-            : "Select Start Date"}
+            : t("publish.selectStartDate")}
         </Text>
       </TouchableOpacity>
       {isRecurring && (
@@ -333,7 +337,7 @@ export default function Publish() {
           onPress={() => setShowPicker("end")}
         >
           <Text style={styles.inputText}>
-            {endDate ? endDate.toISOString().split("T")[0] : "Select End Date"}
+            {endDate ? endDate.toISOString().split("T")[0] : t("publish.selectEndDate")}
           </Text>
         </TouchableOpacity>
       )}
@@ -341,7 +345,7 @@ export default function Publish() {
         style={styles.input}
         onPress={() => setShowPicker("time")}
       >
-        <Text style={styles.inputText}>{time || "Select Time"}</Text>
+        <Text style={styles.inputText}>{time || t("publish.selectTime")}</Text>
       </TouchableOpacity>
 
       {showPicker === "start" && (
@@ -380,7 +384,7 @@ export default function Publish() {
       )}
 
       <TouchableOpacity style={styles.button} onPress={handlePublish}>
-        <Text style={styles.buttonText}>Publish Trip</Text>
+        <Text style={styles.buttonText}>{t("publish.publishTrip")}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

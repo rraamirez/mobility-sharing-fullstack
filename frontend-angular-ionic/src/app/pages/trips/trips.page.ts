@@ -15,6 +15,8 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/angular/standalone";
+import { I18nService } from "../../core/i18n/i18n.service";
+import { LanguageSelectorComponent } from "../../core/i18n/language-selector.component";
 import { Travel, User, UserTravel } from "../../core/models/domain.models";
 import { TravelService } from "../../core/services/travel.service";
 import { UserService } from "../../core/services/user.service";
@@ -36,23 +38,25 @@ import { UserTravelService } from "../../core/services/user-travel.service";
     IonSegment,
     IonSegmentButton,
     IonTitle,
-    IonToolbar
+    IonToolbar,
+    LanguageSelectorComponent
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">My Trips</ion-title>
+        <ion-title class="toolbar-title">{{ i18n.t("trips.title") }}</ion-title>
+        <app-language-selector slot="end"></app-language-selector>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <main class="page-shell stack">
         <ion-segment [value]="mode" (ionChange)="setMode($event.detail.value)">
-          <ion-segment-button value="driver">Published</ion-segment-button>
-          <ion-segment-button value="enrolled">Booked</ion-segment-button>
+          <ion-segment-button value="driver">{{ i18n.t("trips.published") }}</ion-segment-button>
+          <ion-segment-button value="enrolled">{{ i18n.t("trips.booked") }}</ion-segment-button>
         </ion-segment>
 
-        <p class="muted" *ngIf="travels.length === 0">There are no trips in this view.</p>
+        <p class="muted" *ngIf="travels.length === 0">{{ i18n.t("trips.empty") }}</p>
 
         <ion-card class="trip-card" *ngFor="let travel of travels">
           <ion-card-header>
@@ -68,9 +72,9 @@ import { UserTravelService } from "../../core/services/user-travel.service";
             </div>
 
             <div class="actions" *ngIf="mode === 'driver'">
-              <ion-button fill="outline" color="warning" (click)="cancel(travel)">Cancel</ion-button>
-              <ion-button fill="solid" color="success" (click)="complete(travel)">Complete</ion-button>
-              <ion-button fill="clear" (click)="loadTravellers(travel)">Requests</ion-button>
+              <ion-button fill="outline" color="warning" (click)="cancel(travel)">{{ i18n.t("trips.cancel") }}</ion-button>
+              <ion-button fill="solid" color="success" (click)="complete(travel)">{{ i18n.t("trips.complete") }}</ion-button>
+              <ion-button fill="clear" (click)="loadTravellers(travel)">{{ i18n.t("trips.requests") }}</ion-button>
             </div>
 
             <section *ngIf="selectedTravelId === travel.id" class="stack">
@@ -78,10 +82,10 @@ import { UserTravelService } from "../../core/services/user-travel.service";
                 <span>{{ item.user.username }} · {{ item.status }}</span>
                 <span>
                   <ion-button size="small" (click)="accept(travel.id, item.user.id)" *ngIf="item.status === 'pending'">
-                    Accept
+                    {{ i18n.t("trips.accept") }}
                   </ion-button>
                   <ion-button size="small" color="danger" fill="outline" (click)="reject(travel.id, item.user.id)" *ngIf="item.status === 'pending'">
-                    Reject
+                    {{ i18n.t("trips.reject") }}
                   </ion-button>
                 </span>
               </article>
@@ -117,7 +121,8 @@ export class TripsPage implements OnInit {
     private readonly userService: UserService,
     private readonly travelService: TravelService,
     private readonly userTravelService: UserTravelService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    readonly i18n: I18nService
   ) {}
 
   ngOnInit(): void {
@@ -147,14 +152,14 @@ export class TripsPage implements OnInit {
   cancel(travel: Travel): void {
     this.travelService.cancel(travel.id).subscribe({
       next: () => this.load(),
-      error: () => void this.showMessage("The trip could not be canceled.")
+      error: () => void this.showMessage(this.i18n.t("trips.cancelFailed"))
     });
   }
 
   complete(travel: Travel): void {
     this.travelService.complete(travel.id).subscribe({
       next: () => this.load(),
-      error: () => void this.showMessage("The trip could not be completed.")
+      error: () => void this.showMessage(this.i18n.t("trips.completeFailed"))
     });
   }
 
@@ -174,7 +179,7 @@ export class TripsPage implements OnInit {
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "My Trips", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: this.i18n.t("trips.title"), message, buttons: ["OK"] });
     await alert.present();
   }
 }

@@ -17,6 +17,8 @@ import {
   IonToolbar
 } from "@ionic/angular/standalone";
 import { Observable } from "rxjs";
+import { I18nService } from "../../core/i18n/i18n.service";
+import { LanguageSelectorComponent } from "../../core/i18n/language-selector.component";
 import { User } from "../../core/models/domain.models";
 import { TravelPayload, TravelService } from "../../core/services/travel.service";
 import { UserService } from "../../core/services/user.service";
@@ -38,12 +40,14 @@ import { UserService } from "../../core/services/user.service";
     IonSpinner,
     IonTitle,
     IonToggle,
-    IonToolbar
+    IonToolbar,
+    LanguageSelectorComponent
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Publish Trip</ion-title>
+        <ion-title class="toolbar-title">{{ i18n.t("publish.title") }}</ion-title>
+        <app-language-selector slot="end"></app-language-selector>
       </ion-toolbar>
     </ion-header>
 
@@ -53,39 +57,39 @@ import { UserService } from "../../core/services/user.service";
           <ion-card-content class="stack">
             <div class="split-grid">
               <ion-item>
-                <ion-label position="stacked">Origin</ion-label>
+                <ion-label position="stacked">{{ i18n.t("search.origin") }}</ion-label>
                 <ion-input [(ngModel)]="form.origin"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Destination</ion-label>
+                <ion-label position="stacked">{{ i18n.t("search.destination") }}</ion-label>
                 <ion-input [(ngModel)]="form.destination"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Price</ion-label>
+                <ion-label position="stacked">{{ i18n.t("publish.price") }}</ion-label>
                 <ion-input [(ngModel)]="form.price" type="number"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Start Date</ion-label>
+                <ion-label position="stacked">{{ i18n.t("publish.startDate") }}</ion-label>
                 <ion-input [(ngModel)]="form.startDate" type="date"></ion-input>
               </ion-item>
               <ion-item *ngIf="isRecurring">
-                <ion-label position="stacked">End Date</ion-label>
+                <ion-label position="stacked">{{ i18n.t("publish.endDate") }}</ion-label>
                 <ion-input [(ngModel)]="form.endDate" type="date"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Time</ion-label>
+                <ion-label position="stacked">{{ i18n.t("publish.time") }}</ion-label>
                 <ion-input [(ngModel)]="form.time" type="time"></ion-input>
               </ion-item>
             </div>
 
             <ion-item>
-              <ion-label>Recurring Trip</ion-label>
+              <ion-label>{{ i18n.t("publish.recurring") }}</ion-label>
               <ion-toggle [(ngModel)]="isRecurring"></ion-toggle>
             </ion-item>
 
             <ion-button expand="block" (click)="publish()" [disabled]="loading || !isValid">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Publish</span>
+              <span *ngIf="!loading">{{ i18n.t("publish.publish") }}</span>
             </ion-button>
           </ion-card-content>
         </ion-card>
@@ -109,7 +113,8 @@ export class PublishPage implements OnInit {
   constructor(
     private readonly userService: UserService,
     private readonly travelService: TravelService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    readonly i18n: I18nService
   ) {}
 
   ngOnInit(): void {
@@ -152,12 +157,12 @@ export class PublishPage implements OnInit {
     request.subscribe({
       next: async () => {
         this.loading = false;
-        await this.showMessage("Trip published successfully.");
+        await this.showMessage(this.i18n.t("publish.success"));
         this.reset();
       },
       error: async () => {
         this.loading = false;
-        await this.showMessage("The trip could not be published.");
+        await this.showMessage(this.i18n.t("publish.failed"));
       }
     });
   }
@@ -179,7 +184,7 @@ export class PublishPage implements OnInit {
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "Publish Trip", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: this.i18n.t("publish.title"), message, buttons: ["OK"] });
     await alert.present();
   }
 }

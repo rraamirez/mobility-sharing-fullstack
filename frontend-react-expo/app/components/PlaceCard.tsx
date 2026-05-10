@@ -12,6 +12,7 @@ import userTravelService from "../services/userTravelService";
 import { useFocusEffect } from "@react-navigation/native";
 import { UserTravelModel } from "../models/UserTravelModel";
 import MapPreview from "./MapPreview";
+import { useLanguage } from "../context/LanguageContext";
 
 const PlaceCard = ({
   id,
@@ -34,6 +35,7 @@ const PlaceCard = ({
   userTravelStatus = "pending",
   fetchUserData,
 }: PlaceCardProps) => {
+  const { t } = useLanguage();
   const [mapVisible, setMapVisible] = useState(false);
   const [travellersVisible, setTravellersVisible] = useState(false);
   const [localUserTravelStatus, setLocalUserTravelStatus] =
@@ -56,11 +58,11 @@ const PlaceCard = ({
     travelService
       .cancelTravel(travelId)
       .then((response) => {
-        Alert.alert("Success", "Travel has been canceled.");
+        Alert.alert(t("card.success"), t("card.travelCanceled"));
         if (fetchUserData) fetchUserData();
       })
       .catch((error) => {
-        Alert.alert("Error", error.message);
+        Alert.alert(t("card.error"), error.message);
       });
   };
 
@@ -69,13 +71,13 @@ const PlaceCard = ({
       .completeTravel(travelId)
       .then((response) => {
         Alert.alert(
-          "Success",
-          "Travel has been completed! Users can now rate this travel!."
+          t("card.success"),
+          t("card.travelCompleted")
         );
         if (fetchUserData) fetchUserData();
       })
       .catch((error) => {
-        Alert.alert("Error", error.message);
+        Alert.alert(t("card.error"), error.message);
       });
   };
 
@@ -86,8 +88,8 @@ const PlaceCard = ({
       .then((response) => {
         console.log("Unenroll response:", response);
         Alert.alert(
-          "Success",
-          "You have successfully unenrolled from the travel."
+          t("card.success"),
+          t("card.unenrolled")
         );
         if (fetchUserData) fetchUserData();
       });
@@ -132,14 +134,14 @@ const PlaceCard = ({
     userTravelService
       .acceptUserTravel(travelId, userId)
       .then(simpleFetchUserTravelsByTravelId)
-      .catch((err) => Alert.alert("Error", err.message));
+      .catch((err) => Alert.alert(t("card.error"), err.message));
   };
 
   const handleRejectTraveller = (travelId: number, userId: number) => {
     userTravelService
       .cancelUserTravel(travelId, userId)
       .then(simpleFetchUserTravelsByTravelId)
-      .catch((err) => Alert.alert("Error", err.message));
+      .catch((err) => Alert.alert(t("card.error"), err.message));
   };
 
   //logic for handling complete or cancel travels
@@ -166,7 +168,7 @@ const PlaceCard = ({
         <Text style={styles.detailText}>📅 Date: {date}</Text>
         <Text style={styles.detailText}>⏰ Time: {time}</Text>
         <Text style={styles.detailText}>💰 Price: {price} rupees</Text>
-        <Text style={styles.detailText}>Status : {status}</Text>
+        <Text style={styles.detailText}>{t("common.status")}: {status}</Text>
         {enrolled && (
           <Text
             style={[
@@ -179,7 +181,7 @@ const PlaceCard = ({
                 : {},
             ]}
           >
-            Confirmation: {localUserTravelStatus}
+            {t("card.confirmation")}: {localUserTravelStatus}
           </Text>
         )}
         <Text
@@ -238,10 +240,10 @@ const PlaceCard = ({
             longitudeOrigin === null ||
             latitudeDestination === null ||
             longitudeDestination === null
-              ? "Map Disabled"
+              ? t("card.mapDisabled")
               : mapVisible
-              ? "Hide Map"
-              : "Show Map"}
+              ? t("card.hideMap")
+              : t("card.showMap")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -257,7 +259,7 @@ const PlaceCard = ({
           ]}
           onPress={() => {
             if (status === "CANCELED") {
-              Alert.alert("Info", "This travel has been canceled.");
+              Alert.alert(t("card.info"), t("card.travelAlreadyCanceled"));
             } else if (!enrolled) {
               if (id !== undefined) {
                 if (isPastOrToday) {
@@ -266,7 +268,7 @@ const PlaceCard = ({
                   handleCancel(id);
                 }
               } else {
-                Alert.alert("Error", "Travel ID is undefined.");
+                Alert.alert(t("card.error"), t("card.travelIdMissing"));
               }
             } else {
               handleUnenroll(id!, userId!);
@@ -275,14 +277,14 @@ const PlaceCard = ({
         >
           <Text style={styles.buttonText}>
             {status === "CANCELED"
-              ? "Cancelled"
+              ? t("card.cancelled")
               : status === "COMPLETED"
-              ? "Completed"
+              ? t("card.completed")
               : !enrolled
               ? isPastOrToday
-                ? "Complete"
-                : "Cancel Travel"
-              : "Unenroll"}
+                ? t("card.complete")
+                : t("card.cancelTravel")
+              : t("card.unenroll")}
           </Text>
         </TouchableOpacity>
       </View>
@@ -292,7 +294,7 @@ const PlaceCard = ({
             style={[styles.fullButton]}
             onPress={fetchUserTravelsByTravelId}
           >
-            <Text style={styles.buttonText}>Handle Travellers</Text>
+            <Text style={styles.buttonText}>{t("card.handleTravellers")}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -312,7 +314,7 @@ const PlaceCard = ({
                       id && handleAcceptTraveller(id, traveller.user.id)
                     }
                   >
-                    <Text style={styles.buttonTextSmall}>Accept</Text>
+                    <Text style={styles.buttonTextSmall}>{t("card.accept")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.rejectButton]}
@@ -320,18 +322,18 @@ const PlaceCard = ({
                       id && handleRejectTraveller(id, traveller.user.id)
                     }
                   >
-                    <Text style={styles.buttonTextSmall}>Reject</Text>
+                    <Text style={styles.buttonTextSmall}>{t("card.reject")}</Text>
                   </TouchableOpacity>
                 </View>
               )}
               {traveller.status === "confirmed" && (
                 <View style={styles.travellerActions}>
-                  <Text style={styles.statusConfirmed}>Confirmed</Text>
+                  <Text style={styles.statusConfirmed}>{t("card.confirmed")}</Text>
                 </View>
               )}
               {traveller.status === "canceled" && (
                 <View style={styles.travellerActions}>
-                  <Text style={styles.statusCanceled}>Canceled</Text>
+                  <Text style={styles.statusCanceled}>{t("card.canceled")}</Text>
                 </View>
               )}
             </View>

@@ -1,0 +1,62 @@
+name: Security
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  secret-pattern-scan:
+    name: Secret pattern scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fail on common leaked secret patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if rg --hidden --glob '!.git/**' --glob '!**/package-lock.json' --glob '!**/target/**' --glob '!**/dist/**' --glob '!**/www/**' \
+            -n -- '-----BEGIN (RSA|DSA|EC|OPENSSH|PGP)? ?PRIVATE KEY-----|github_pat_[A-Za-z0-9_]+|ghp_[A-Za-z0-9]{36}|sk-[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]+|AKIA[0-9A-Z]{16}' \
+            .; then
+            echo "Potential secret found. Remove it before publishing.";
+            exit 1;
+          fi
+
+      - name: Fail on unsafe public defaults
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if rg --hidden --glob '!.git/**' --glob '!.github/workflows/security.yml' --glob '!**/package-lock.json' \
+            -n -- 'JWT_SECRET_KEY=3f8b1de|MYSQL_ROOT_PASSWORD=root|MYSQL_PASSWORD=mobility|SPRING_SECURITY_USER_PASSWORD=admin|:-root}|:-mobility}|:-admin}' \
+            .; then
+            echo "Unsafe default credentials found. Use placeholders or required environment variables.";
+            exit 1;
+          fi
+
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@v4

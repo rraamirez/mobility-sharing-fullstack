@@ -13,9 +13,12 @@ import { UserModel } from "../models/Users";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { Alert } from "react-native";
+import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleLogout = async () => {
     await logout();
@@ -58,8 +61,8 @@ export default function ProfileScreen() {
   const handleUpdate = async () => {
     if (!formData.password.trim()) {
       Alert.alert(
-        "Password Required",
-        "Please enter your password to update your profile."
+        t("profile.passwordRequired"),
+        t("profile.passwordRequiredMessage")
       );
       return;
     }
@@ -76,7 +79,7 @@ export default function ProfileScreen() {
 
       Alert.alert(
         "Success",
-        "User updated successfully! You will be logged out.",
+        t("profile.updateSuccess"),
         [
           {
             text: "OK",
@@ -94,7 +97,8 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+      <LanguageSelector />
+      <Text style={styles.title}>{t("profile.title")}</Text>
       {user?.rating != null && (
         <View style={styles.ratingContainer}>
           <Text style={styles.ratingText}>⭐ Rating: {user.rating}/5</Text>
@@ -109,54 +113,54 @@ export default function ProfileScreen() {
       )}
       {user && (
         <View style={styles.profileContainer}>
-          <Text style={styles.label}>Name (Max 100 characters)</Text>
+          <Text style={styles.label}>{t("profile.nameLabel")}</Text>
           <TextInput
             style={styles.input}
             value={formData.name}
             onChangeText={(text) => handleChange("name", text)}
-            placeholder="Name"
+            placeholder={t("auth.name")}
             placeholderTextColor="#aaa"
             maxLength={100}
           />
-          <Text style={styles.label}>Email (Max 150 characters)</Text>
+          <Text style={styles.label}>{t("profile.emailLabel")}</Text>
           <TextInput
             style={styles.input}
             value={formData.email}
             onChangeText={(text) => handleChange("email", text)}
-            placeholder="Email"
+            placeholder={t("auth.email")}
             placeholderTextColor="#aaa"
             keyboardType="email-address"
             maxLength={150}
           />
-          <Text style={styles.label}>Username (Max 15 characters)</Text>
+          <Text style={styles.label}>{t("profile.usernameLabel")}</Text>
           <TextInput
             style={styles.input}
             value={formData.username}
             onChangeText={(text) => handleChange("username", text)}
-            placeholder="Username"
+            placeholder={t("auth.username")}
             placeholderTextColor="#aaa"
             maxLength={15}
           />
-          <Text style={styles.label}>New Password (required for update)</Text>
+          <Text style={styles.label}>{t("profile.passwordLabel")}</Text>
           <TextInput
             style={styles.input}
             value={formData.password}
             onChangeText={(text) => handleChange("password", text)}
-            placeholder="Password"
+            placeholder={t("auth.password")}
             placeholderTextColor="#aaa"
             secureTextEntry
           />
-          <Text style={styles.label}>Rupee Wallet</Text>
+          <Text style={styles.label}>{t("profile.wallet")}</Text>
           <View style={styles.readonlyContainer}>
             <Text style={styles.readonlyText}>{user.rupeeWallet}</Text>
           </View>
         </View>
       )}
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
+        <Text style={styles.buttonText}>{t("profile.logout")}</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
-        <Text style={styles.buttonText}>Update Profile</Text>
+        <Text style={styles.buttonText}>{t("profile.update")}</Text>
       </TouchableOpacity>
     </View>
   );

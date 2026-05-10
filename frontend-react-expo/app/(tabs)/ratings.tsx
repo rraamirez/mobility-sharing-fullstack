@@ -17,6 +17,8 @@ import RatingCard from "../components/RatingCard";
 import { TravelModel } from "../models/TravelModel";
 import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/FontAwesome";
+import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Ratings() {
   const [view, setView] = useState("toRate");
@@ -29,6 +31,7 @@ export default function Ratings() {
   const [selectedTrip, setSelectedTrip] = useState<TravelModel | null>(null);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
+  const { t } = useLanguage();
 
   const fetchUserData = async () => {
     try {
@@ -101,31 +104,30 @@ export default function Ratings() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ratings</Text>
-      <Text style={styles.subtitle}>
-        "Shaping journeys, building trust – rate, connect, evolve."
-      </Text>
+      <LanguageSelector />
+      <Text style={styles.title}>{t("ratings.title")}</Text>
+      <Text style={styles.subtitle}>{t("ratings.subtitle")}</Text>
 
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tabButton, view === "toRate" && styles.activeTab]}
           onPress={() => setView("toRate")}
         >
-          <Text style={styles.tabText}>Trips to Rate</Text>
+          <Text style={styles.tabText}>{t("ratings.toRate")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.tabButton, view === "rated" && styles.activeTab]}
           onPress={() => setView("rated")}
         >
-          <Text style={styles.tabText}>Rated Trips</Text>
+          <Text style={styles.tabText}>{t("ratings.rated")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.tabButton, view === "received" && styles.activeTab]}
           onPress={() => setView("received")}
         >
-          <Text style={styles.tabText}>My Received Ratings</Text>
+          <Text style={styles.tabText}>{t("ratings.received")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -141,22 +143,22 @@ export default function Ratings() {
                 </Text>
                 <Text
                   style={styles.cardText}
-                >{`Driver: ${item.driver.name}`}</Text>
-                <Text style={styles.cardText}>{`Date: ${item.date}`}</Text>
-                <Text style={styles.cardText}>{`Time: ${item.time}`}</Text>
-                <Text style={styles.cardText}>{`Status: ${item.status}`}</Text>
+                >{`${t("common.driver")}: ${item.driver.name}`}</Text>
+                <Text style={styles.cardText}>{`${t("common.date")}: ${item.date}`}</Text>
+                <Text style={styles.cardText}>{`${t("common.time")}: ${item.time}`}</Text>
+                <Text style={styles.cardText}>{`${t("common.status")}: ${item.status}`}</Text>
                 <TouchableOpacity
                   style={styles.rateButton}
                   onPress={() => openRatingModal(item)}
                 >
-                  <Text style={styles.buttonText}>Rate Now</Text>
+                  <Text style={styles.buttonText}>{t("ratings.rateNow")}</Text>
                 </TouchableOpacity>
               </View>
             )}
             ListEmptyComponent={() => (
               <View style={styles.emptyContainer}>
                 <Icon name="star-o" size={120} color="#888" />
-                <Text style={styles.emptyText}>No trips to rate yet</Text>
+                <Text style={styles.emptyText}>{t("ratings.noToRate")}</Text>
               </View>
             )}
           />
@@ -171,7 +173,7 @@ export default function Ratings() {
               <View style={styles.emptyContainer}>
                 <Icon name="star" size={120} color="#888" />
                 <Text style={styles.emptyText}>
-                  You haven't rated any trips yet
+                  {t("ratings.noRated")}
                 </Text>
               </View>
             )}
@@ -186,7 +188,7 @@ export default function Ratings() {
             ListEmptyComponent={() => (
               <View style={styles.emptyContainer}>
                 <Icon name="heart-o" size={120} color="#888" />
-                <Text style={styles.emptyText}>No ratings received yet</Text>
+                <Text style={styles.emptyText}>{t("ratings.noReceived")}</Text>
               </View>
             )}
           />
@@ -198,7 +200,7 @@ export default function Ratings() {
         onBackdropPress={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Rate this trip</Text>
+          <Text style={styles.modalTitle}>{t("ratings.rateThisTrip")}</Text>
           <View style={{ flexDirection: "row", marginVertical: 10 }}>
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity key={star} onPress={() => setRating(star)}>
@@ -214,13 +216,13 @@ export default function Ratings() {
 
           <TextInput
             style={styles.input}
-            placeholder="Leave a comment..."
+            placeholder={t("ratings.commentPlaceholder")}
             placeholderTextColor="#aaa"
             onChangeText={setComment}
             value={comment}
           />
           <TouchableOpacity style={styles.submitButton} onPress={submitRating}>
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.buttonText}>{t("ratings.submit")}</Text>
           </TouchableOpacity>
         </View>
       </Modal>

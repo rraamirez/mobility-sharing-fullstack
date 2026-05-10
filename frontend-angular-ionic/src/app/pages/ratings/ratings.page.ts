@@ -18,6 +18,8 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/angular/standalone";
+import { I18nService } from "../../core/i18n/i18n.service";
+import { LanguageSelectorComponent } from "../../core/i18n/language-selector.component";
 import { Rating, Travel, User } from "../../core/models/domain.models";
 import { RatingService } from "../../core/services/rating.service";
 import { TravelService } from "../../core/services/travel.service";
@@ -42,19 +44,21 @@ import { UserService } from "../../core/services/user.service";
     IonRange,
     IonTextarea,
     IonTitle,
-    IonToolbar
+    IonToolbar,
+    LanguageSelectorComponent
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Ratings</ion-title>
+        <ion-title class="toolbar-title">{{ i18n.t("ratings.title") }}</ion-title>
+        <app-language-selector slot="end"></app-language-selector>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <main class="page-shell split-grid">
         <section class="stack">
-          <h2>Trips Pending Rating</h2>
+          <h2>{{ i18n.t("ratings.pending") }}</h2>
           <ion-card class="trip-card" *ngFor="let travel of unrated">
             <ion-card-header>
               <ion-card-title>{{ travel.origin }} -> {{ travel.destination }}</ion-card-title>
@@ -62,25 +66,25 @@ import { UserService } from "../../core/services/user.service";
             </ion-card-header>
             <ion-card-content class="stack">
               <ion-item>
-                <ion-label position="stacked">Rating: {{ form.rating }}</ion-label>
+                <ion-label position="stacked">{{ i18n.t("ratings.rating") }}: {{ form.rating }}</ion-label>
                 <ion-range [(ngModel)]="form.rating" min="1" max="5" step="1" snaps="true"></ion-range>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Comment</ion-label>
+                <ion-label position="stacked">{{ i18n.t("ratings.comment") }}</ion-label>
                 <ion-textarea [(ngModel)]="form.comment"></ion-textarea>
               </ion-item>
-              <ion-button (click)="rate(travel)">Send Rating</ion-button>
+              <ion-button (click)="rate(travel)">{{ i18n.t("ratings.send") }}</ion-button>
             </ion-card-content>
           </ion-card>
-          <p class="muted" *ngIf="unrated.length === 0">You have no trips pending rating.</p>
+          <p class="muted" *ngIf="unrated.length === 0">{{ i18n.t("ratings.empty") }}</p>
         </section>
 
         <section class="stack">
-          <h2>Received</h2>
+          <h2>{{ i18n.t("ratings.received") }}</h2>
           <ion-card *ngFor="let rating of received">
             <ion-card-content>
               <strong>{{ rating.rating }}/5</strong>
-              <p>{{ rating.comment || "No comment" }}</p>
+              <p>{{ rating.comment || i18n.t("ratings.noComment") }}</p>
             </ion-card-content>
           </ion-card>
         </section>
@@ -101,7 +105,8 @@ export class RatingsPage implements OnInit {
     private readonly userService: UserService,
     private readonly travelService: TravelService,
     private readonly ratingService: RatingService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    readonly i18n: I18nService
   ) {}
 
   ngOnInit(): void {
@@ -133,15 +138,15 @@ export class RatingsPage implements OnInit {
     }).subscribe({
       next: async () => {
         this.form = { rating: 5, comment: "" };
-        await this.showMessage("Rating sent.");
+        await this.showMessage(this.i18n.t("ratings.sent"));
         this.refresh();
       },
-      error: () => void this.showMessage("The rating could not be sent.")
+      error: () => void this.showMessage(this.i18n.t("ratings.failed"))
     });
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "Ratings", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: this.i18n.t("ratings.title"), message, buttons: ["OK"] });
     await alert.present();
   }
 }

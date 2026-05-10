@@ -13,6 +13,8 @@ import {
   IonSpinner,
   IonText
 } from "@ionic/angular/standalone";
+import { I18nService } from "../../core/i18n/i18n.service";
+import { LanguageSelectorComponent } from "../../core/i18n/language-selector.component";
 import { AuthService } from "../../core/services/auth.service";
 
 @Component({
@@ -30,34 +32,36 @@ import { AuthService } from "../../core/services/auth.service";
     IonItem,
     IonLabel,
     IonSpinner,
-    IonText
+    IonText,
+    LanguageSelectorComponent
   ],
   template: `
     <ion-content>
       <main class="auth-shell">
         <section>
           <p class="eyebrow">Mobility Sharing</p>
-          <h1>Comparte trayectos con una experiencia web lista para entregar.</h1>
-          <p class="muted">Frontend Ionic + Angular conectado al backend Spring Boot y MySQL dockerizados.</p>
+          <h1>{{ i18n.t("auth.heroTitle") }}</h1>
+          <p class="muted">{{ i18n.t("auth.heroSubtitle") }}</p>
         </section>
 
         <ion-card>
           <ion-card-content class="stack">
-            <h2>Sign In</h2>
+            <app-language-selector></app-language-selector>
+            <h2>{{ i18n.t("auth.signIn") }}</h2>
             <ion-item>
-              <ion-label position="stacked">Username</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.username") }}</ion-label>
               <ion-input [(ngModel)]="username" autocomplete="username"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Password</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.password") }}</ion-label>
               <ion-input [(ngModel)]="password" type="password" autocomplete="current-password"></ion-input>
             </ion-item>
             <ion-button expand="block" (click)="submit()" [disabled]="loading">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Sign In</span>
+              <span *ngIf="!loading">{{ i18n.t("auth.signIn") }}</span>
             </ion-button>
             <ion-text color="danger" *ngIf="error">{{ error }}</ion-text>
-            <ion-button fill="clear" routerLink="/register">Create Account</ion-button>
+            <ion-button fill="clear" routerLink="/register">{{ i18n.t("auth.createAccount") }}</ion-button>
           </ion-card-content>
         </ion-card>
       </main>
@@ -115,7 +119,8 @@ export class LoginPage {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    readonly i18n: I18nService
   ) {}
 
   submit(): void {
@@ -124,7 +129,7 @@ export class LoginPage {
     this.authService.login(this.username.trim(), this.password).subscribe({
       next: () => void this.router.navigateByUrl("/app/search"),
       error: () => {
-        this.error = "Sign in failed. Check your username and password.";
+        this.error = this.i18n.t("auth.signInFailed");
         this.loading = false;
       }
     });
