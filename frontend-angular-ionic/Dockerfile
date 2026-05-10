@@ -7,7 +7,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM mirror.gcr.io/library/nginx:1.27-alpine
+FROM mirror.gcr.io/library/nginx:1.29-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/www/browser /usr/share/nginx/html
 
