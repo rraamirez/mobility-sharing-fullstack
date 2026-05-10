@@ -38,7 +38,7 @@ import { UserService } from "../../core/services/user.service";
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Perfil</ion-title>
+        <ion-title class="toolbar-title">Profile</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -49,21 +49,21 @@ import { UserService } from "../../core/services/user.service";
             <h2>{{ user.username }}</h2>
             <p class="pill">{{ user.ecoRank?.name || "EcoRank pendiente" }}</p>
             <ion-item>
-              <ion-label position="stacked">Nombre</ion-label>
+              <ion-label position="stacked">Name</ion-label>
               <ion-input [(ngModel)]="form.name"></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="stacked">Email</ion-label>
               <ion-input [(ngModel)]="form.email"></ion-input>
             </ion-item>
-            <ion-button expand="block" (click)="save()">Guardar cambios</ion-button>
-            <ion-button expand="block" color="danger" fill="outline" (click)="logout()">Cerrar sesion</ion-button>
+            <ion-button expand="block" (click)="save()">Save Changes</ion-button>
+            <ion-button expand="block" color="danger" fill="outline" (click)="logout()">Sign Out</ion-button>
           </ion-card-content>
         </ion-card>
 
         <ion-card>
           <ion-card-content class="stack">
-            <h2>Impacto semanal</h2>
+            <h2>Weekly Impact</h2>
             <pre>{{ stats | json }}</pre>
           </ion-card-content>
         </ion-card>
@@ -115,10 +115,10 @@ export class ProfilePage implements OnInit {
 
     this.userService.update({ ...this.user, ...this.form }).subscribe({
       next: async () => {
-        await this.showMessage("Perfil actualizado.");
+        await this.showMessage("Profile updated.");
         this.load();
       },
-      error: () => void this.showMessage("No se pudo guardar el perfil.")
+      error: () => void this.showMessage("The profile could not be saved.")
     });
   }
 
@@ -127,7 +127,7 @@ export class ProfilePage implements OnInit {
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "Perfil", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: "Profile", message, buttons: ["OK"] });
     await alert.present();
   }
 }

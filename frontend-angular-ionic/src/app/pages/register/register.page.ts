@@ -37,9 +37,9 @@ import { AuthService } from "../../core/services/auth.service";
       <main class="auth-shell">
         <ion-card>
           <ion-card-content class="stack">
-            <h1>Crear cuenta</h1>
+            <h1>Create Account</h1>
             <ion-item>
-              <ion-label position="stacked">Nombre</ion-label>
+              <ion-label position="stacked">Name</ion-label>
               <ion-input [(ngModel)]="form.name"></ion-input>
             </ion-item>
             <ion-item>
@@ -47,19 +47,19 @@ import { AuthService } from "../../core/services/auth.service";
               <ion-input [(ngModel)]="form.email" type="email"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Usuario</ion-label>
+              <ion-label position="stacked">Username</ion-label>
               <ion-input [(ngModel)]="form.username"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Contrasena</ion-label>
+              <ion-label position="stacked">Password</ion-label>
               <ion-input [(ngModel)]="form.password" type="password"></ion-input>
             </ion-item>
             <ion-button expand="block" (click)="submit()" [disabled]="loading || !isValid">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Registrarme</span>
+              <span *ngIf="!loading">Register</span>
             </ion-button>
             <ion-text color="danger" *ngIf="error">{{ error }}</ion-text>
-            <ion-button fill="clear" routerLink="/login">Ya tengo cuenta</ion-button>
+            <ion-button fill="clear" routerLink="/login">I already have an account</ion-button>
           </ion-card-content>
         </ion-card>
       </main>
@@ -110,7 +110,7 @@ export class RegisterPage {
     this.authService.register(this.form).subscribe({
       next: () => void this.router.navigateByUrl("/app/search"),
       error: () => {
-        this.error = "No se pudo crear la cuenta. Prueba con otro usuario o email.";
+        this.error = "Account creation failed. Try another username or email.";
         this.loading = false;
       }
     });

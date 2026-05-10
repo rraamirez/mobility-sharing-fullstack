@@ -51,7 +51,7 @@ import { UserTravelService } from "../../core/services/user-travel.service";
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Buscar viaje</ion-title>
+        <ion-title class="toolbar-title">Search Trips</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -60,28 +60,28 @@ import { UserTravelService } from "../../core/services/user-travel.service";
         <ion-card>
           <ion-card-content class="split-grid">
             <ion-item>
-              <ion-label position="stacked">Origen</ion-label>
+              <ion-label position="stacked">Origin</ion-label>
               <ion-input [(ngModel)]="origin" placeholder="Granada"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Destino</ion-label>
+              <ion-label position="stacked">Destination</ion-label>
               <ion-input [(ngModel)]="destination" placeholder="Opcional"></ion-input>
             </ion-item>
             <ion-button expand="block" (click)="search()" [disabled]="loading || !origin.trim()">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Buscar</span>
+              <span *ngIf="!loading">Search</span>
             </ion-button>
           </ion-card-content>
         </ion-card>
 
-        <p class="muted" *ngIf="!loading && groups.length === 0">No hay resultados todavia.</p>
+        <p class="muted" *ngIf="!loading && groups.length === 0">No results yet.</p>
 
         <ion-list>
           <ion-card class="trip-card" *ngFor="let group of groups">
             <ion-card-header>
               <ion-card-title>{{ group[0].origin }} -> {{ group[0].destination }}</ion-card-title>
               <p class="muted">
-                Conductor: {{ group[0].driver.name || group[0].driver.username }}
+                Driver: {{ group[0].driver.name || group[0].driver.username }}
                 <span *ngIf="group[0].driver.rating"> · {{ group[0].driver.rating }}/5</span>
               </p>
             </ion-card-header>
@@ -95,11 +95,11 @@ import { UserTravelService } from "../../core/services/user-travel.service";
                   </ion-badge>
                 </div>
                 <ion-buttons>
-                  <ion-button fill="solid" (click)="book(travel)">Reservar</ion-button>
+                  <ion-button fill="solid" (click)="book(travel)">Book</ion-button>
                 </ion-buttons>
               </article>
               <ion-button fill="outline" (click)="bookAll(group)" *ngIf="group.length > 1">
-                Reservar grupo completo
+                Book full group
               </ion-button>
             </ion-card-content>
           </ion-card>
@@ -156,25 +156,25 @@ export class SearchPage implements OnInit {
       },
       error: async () => {
         this.loading = false;
-        await this.showMessage("No se pudieron cargar viajes para esa busqueda.");
+        await this.showMessage("Trips could not be loaded for that search.");
       }
     });
   }
 
   async book(travel: Travel): Promise<void> {
     if (!this.user) {
-      await this.showMessage("No se pudo cargar tu usuario.");
+      await this.showMessage("Your user could not be loaded.");
       return;
     }
 
     if (travel.price > this.user.rupeeWallet) {
-      await this.showMessage("Saldo insuficiente en la cartera.");
+      await this.showMessage("Insufficient wallet balance.");
       return;
     }
 
     this.userTravelService.book(travel.id, this.user.id).subscribe({
-      next: () => void this.showMessage("Solicitud enviada al conductor."),
-      error: () => void this.showMessage("No se pudo reservar este viaje.")
+      next: () => void this.showMessage("Request sent to the driver."),
+      error: () => void this.showMessage("This trip could not be booked.")
     });
   }
 

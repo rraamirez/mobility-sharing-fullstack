@@ -43,21 +43,21 @@ import { AuthService } from "../../core/services/auth.service";
 
         <ion-card>
           <ion-card-content class="stack">
-            <h2>Entrar</h2>
+            <h2>Sign In</h2>
             <ion-item>
-              <ion-label position="stacked">Usuario</ion-label>
+              <ion-label position="stacked">Username</ion-label>
               <ion-input [(ngModel)]="username" autocomplete="username"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Contrasena</ion-label>
+              <ion-label position="stacked">Password</ion-label>
               <ion-input [(ngModel)]="password" type="password" autocomplete="current-password"></ion-input>
             </ion-item>
             <ion-button expand="block" (click)="submit()" [disabled]="loading">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Entrar</span>
+              <span *ngIf="!loading">Sign In</span>
             </ion-button>
             <ion-text color="danger" *ngIf="error">{{ error }}</ion-text>
-            <ion-button fill="clear" routerLink="/register">Crear cuenta</ion-button>
+            <ion-button fill="clear" routerLink="/register">Create Account</ion-button>
           </ion-card-content>
         </ion-card>
       </main>
@@ -124,7 +124,7 @@ export class LoginPage {
     this.authService.login(this.username.trim(), this.password).subscribe({
       next: () => void this.router.navigateByUrl("/app/search"),
       error: () => {
-        this.error = "No se pudo iniciar sesion. Revisa usuario y contrasena.";
+        this.error = "Sign in failed. Check your username and password.";
         this.loading = false;
       }
     });

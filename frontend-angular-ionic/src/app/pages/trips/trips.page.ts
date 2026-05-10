@@ -41,18 +41,18 @@ import { UserTravelService } from "../../core/services/user-travel.service";
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Mis viajes</ion-title>
+        <ion-title class="toolbar-title">My Trips</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <main class="page-shell stack">
         <ion-segment [value]="mode" (ionChange)="setMode($event.detail.value)">
-          <ion-segment-button value="driver">Publicados</ion-segment-button>
-          <ion-segment-button value="enrolled">Reservados</ion-segment-button>
+          <ion-segment-button value="driver">Published</ion-segment-button>
+          <ion-segment-button value="enrolled">Booked</ion-segment-button>
         </ion-segment>
 
-        <p class="muted" *ngIf="travels.length === 0">No hay viajes en esta vista.</p>
+        <p class="muted" *ngIf="travels.length === 0">There are no trips in this view.</p>
 
         <ion-card class="trip-card" *ngFor="let travel of travels">
           <ion-card-header>
@@ -68,9 +68,9 @@ import { UserTravelService } from "../../core/services/user-travel.service";
             </div>
 
             <div class="actions" *ngIf="mode === 'driver'">
-              <ion-button fill="outline" color="warning" (click)="cancel(travel)">Cancelar</ion-button>
-              <ion-button fill="solid" color="success" (click)="complete(travel)">Completar</ion-button>
-              <ion-button fill="clear" (click)="loadTravellers(travel)">Solicitudes</ion-button>
+              <ion-button fill="outline" color="warning" (click)="cancel(travel)">Cancel</ion-button>
+              <ion-button fill="solid" color="success" (click)="complete(travel)">Complete</ion-button>
+              <ion-button fill="clear" (click)="loadTravellers(travel)">Requests</ion-button>
             </div>
 
             <section *ngIf="selectedTravelId === travel.id" class="stack">
@@ -78,10 +78,10 @@ import { UserTravelService } from "../../core/services/user-travel.service";
                 <span>{{ item.user.username }} · {{ item.status }}</span>
                 <span>
                   <ion-button size="small" (click)="accept(travel.id, item.user.id)" *ngIf="item.status === 'pending'">
-                    Aceptar
+                    Accept
                   </ion-button>
                   <ion-button size="small" color="danger" fill="outline" (click)="reject(travel.id, item.user.id)" *ngIf="item.status === 'pending'">
-                    Rechazar
+                    Reject
                   </ion-button>
                 </span>
               </article>
@@ -147,14 +147,14 @@ export class TripsPage implements OnInit {
   cancel(travel: Travel): void {
     this.travelService.cancel(travel.id).subscribe({
       next: () => this.load(),
-      error: () => void this.showMessage("No se pudo cancelar el viaje.")
+      error: () => void this.showMessage("The trip could not be canceled.")
     });
   }
 
   complete(travel: Travel): void {
     this.travelService.complete(travel.id).subscribe({
       next: () => this.load(),
-      error: () => void this.showMessage("No se pudo completar el viaje.")
+      error: () => void this.showMessage("The trip could not be completed.")
     });
   }
 
@@ -174,7 +174,7 @@ export class TripsPage implements OnInit {
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "Mis viajes", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: "My Trips", message, buttons: ["OK"] });
     await alert.present();
   }
 }

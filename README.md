@@ -1,28 +1,28 @@
 # Mobility Sharing Fullstack
 
-Monorepo completo de Mobility Sharing:
+Complete Mobility Sharing monorepo.
 
-- `backend`: API Java 21 + Spring Boot + MySQL + Flyway + JWT.
-- `frontend-angular-ionic`: frontend web Ionic + Angular.
-- `frontend-react-expo`: frontend React Native/Expo, compatible con web y movil.
-- `docker-compose.yml`: levanta base de datos, backend y los dos frontends.
+- `backend`: Java 21, Spring Boot, MySQL, Flyway, and JWT authentication.
+- `frontend-angular-ionic`: Ionic + Angular web frontend.
+- `frontend-react-expo`: React Native/Expo frontend, compatible with web and mobile.
+- `docker-compose.yml`: starts the database, backend, and both frontends.
 
-## Arranque rapido
+## Quick Start
 
 ```bash
 docker compose up -d --build
 ```
 
-Servicios:
+Services:
 
 - Ionic + Angular: http://localhost:3000
 - React Native/Expo Web: http://localhost:3001
 - Backend API: http://localhost:8080
 - Swagger/OpenAPI: http://localhost:8080/doc
-- Health backend: http://localhost:9090/actuator/health
+- Backend health: http://localhost:9090/actuator/health
 - MySQL: localhost:3307
 
-## Levantar solo una parte
+## Start Individual Services
 
 ```bash
 docker compose up -d --build db backend
@@ -30,7 +30,7 @@ docker compose up -d --build frontend-ionic
 docker compose up -d --build frontend-react
 ```
 
-## Desarrollo local
+## Local Development
 
 Backend:
 
@@ -39,7 +39,7 @@ cd backend
 ./mvnw spring-boot:run
 ```
 
-Frontend Ionic + Angular:
+Ionic + Angular frontend:
 
 ```bash
 cd frontend-angular-ionic
@@ -47,7 +47,7 @@ npm install
 npm start
 ```
 
-Frontend React Native/Expo:
+React Native/Expo frontend:
 
 ```bash
 cd frontend-react-expo
@@ -55,26 +55,26 @@ npm install
 npm start
 ```
 
-Para movil fisico con Expo, usa la IP local del PC:
+For a physical mobile device with Expo, use your computer's local network IP:
 
 ```powershell
-$env:EXPO_PUBLIC_API_URL="http://TU_IP_LOCAL:8080"
+$env:EXPO_PUBLIC_API_URL="http://YOUR_LOCAL_IP:8080"
 npm start
 ```
 
-Para emulador Android:
+For the Android emulator:
 
 ```powershell
 $env:EXPO_PUBLIC_API_URL="http://10.0.2.2:8080"
 npm start
 ```
 
-## Variables
+## Environment Variables
 
-Puedes copiar `.env.example` a `.env` y ajustar credenciales si lo necesitas:
+You can copy `.env.example` to `.env` and customize credentials if needed:
 
 ```bash
 cp .env.example .env
 ```
 
-Docker Compose incluye valores por defecto para que el proyecto arranque sin configurar nada.
+Docker Compose includes default values, so the project can run without extra configuration.

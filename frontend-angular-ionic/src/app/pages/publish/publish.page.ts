@@ -43,7 +43,7 @@ import { UserService } from "../../core/services/user.service";
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Publicar viaje</ion-title>
+        <ion-title class="toolbar-title">Publish Trip</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -53,39 +53,39 @@ import { UserService } from "../../core/services/user.service";
           <ion-card-content class="stack">
             <div class="split-grid">
               <ion-item>
-                <ion-label position="stacked">Origen</ion-label>
+                <ion-label position="stacked">Origin</ion-label>
                 <ion-input [(ngModel)]="form.origin"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Destino</ion-label>
+                <ion-label position="stacked">Destination</ion-label>
                 <ion-input [(ngModel)]="form.destination"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Precio</ion-label>
+                <ion-label position="stacked">Price</ion-label>
                 <ion-input [(ngModel)]="form.price" type="number"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Fecha inicio</ion-label>
+                <ion-label position="stacked">Start Date</ion-label>
                 <ion-input [(ngModel)]="form.startDate" type="date"></ion-input>
               </ion-item>
               <ion-item *ngIf="isRecurring">
-                <ion-label position="stacked">Fecha fin</ion-label>
+                <ion-label position="stacked">End Date</ion-label>
                 <ion-input [(ngModel)]="form.endDate" type="date"></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Hora</ion-label>
+                <ion-label position="stacked">Time</ion-label>
                 <ion-input [(ngModel)]="form.time" type="time"></ion-input>
               </ion-item>
             </div>
 
             <ion-item>
-              <ion-label>Viaje recurrente</ion-label>
+              <ion-label>Recurring Trip</ion-label>
               <ion-toggle [(ngModel)]="isRecurring"></ion-toggle>
             </ion-item>
 
             <ion-button expand="block" (click)="publish()" [disabled]="loading || !isValid">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Publicar</span>
+              <span *ngIf="!loading">Publish</span>
             </ion-button>
           </ion-card-content>
         </ion-card>
@@ -152,12 +152,12 @@ export class PublishPage implements OnInit {
     request.subscribe({
       next: async () => {
         this.loading = false;
-        await this.showMessage("Viaje publicado correctamente.");
+        await this.showMessage("Trip published successfully.");
         this.reset();
       },
       error: async () => {
         this.loading = false;
-        await this.showMessage("No se pudo publicar el viaje.");
+        await this.showMessage("The trip could not be published.");
       }
     });
   }
@@ -179,7 +179,7 @@ export class PublishPage implements OnInit {
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "Publicar viaje", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: "Publish Trip", message, buttons: ["OK"] });
     await alert.present();
   }
 }

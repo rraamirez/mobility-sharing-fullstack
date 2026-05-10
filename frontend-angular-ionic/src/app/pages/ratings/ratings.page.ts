@@ -47,14 +47,14 @@ import { UserService } from "../../core/services/user.service";
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="toolbar-title">Valoraciones</ion-title>
+        <ion-title class="toolbar-title">Ratings</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <main class="page-shell split-grid">
         <section class="stack">
-          <h2>Viajes pendientes de valorar</h2>
+          <h2>Trips Pending Rating</h2>
           <ion-card class="trip-card" *ngFor="let travel of unrated">
             <ion-card-header>
               <ion-card-title>{{ travel.origin }} -> {{ travel.destination }}</ion-card-title>
@@ -62,25 +62,25 @@ import { UserService } from "../../core/services/user.service";
             </ion-card-header>
             <ion-card-content class="stack">
               <ion-item>
-                <ion-label position="stacked">Puntuacion: {{ form.rating }}</ion-label>
+                <ion-label position="stacked">Rating: {{ form.rating }}</ion-label>
                 <ion-range [(ngModel)]="form.rating" min="1" max="5" step="1" snaps="true"></ion-range>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Comentario</ion-label>
+                <ion-label position="stacked">Comment</ion-label>
                 <ion-textarea [(ngModel)]="form.comment"></ion-textarea>
               </ion-item>
-              <ion-button (click)="rate(travel)">Enviar valoracion</ion-button>
+              <ion-button (click)="rate(travel)">Send Rating</ion-button>
             </ion-card-content>
           </ion-card>
-          <p class="muted" *ngIf="unrated.length === 0">No tienes viajes pendientes de valorar.</p>
+          <p class="muted" *ngIf="unrated.length === 0">You have no trips pending rating.</p>
         </section>
 
         <section class="stack">
-          <h2>Recibidas</h2>
+          <h2>Received</h2>
           <ion-card *ngFor="let rating of received">
             <ion-card-content>
               <strong>{{ rating.rating }}/5</strong>
-              <p>{{ rating.comment || "Sin comentario" }}</p>
+              <p>{{ rating.comment || "No comment" }}</p>
             </ion-card-content>
           </ion-card>
         </section>
@@ -133,15 +133,15 @@ export class RatingsPage implements OnInit {
     }).subscribe({
       next: async () => {
         this.form = { rating: 5, comment: "" };
-        await this.showMessage("Valoracion enviada.");
+        await this.showMessage("Rating sent.");
         this.refresh();
       },
-      error: () => void this.showMessage("No se pudo enviar la valoracion.")
+      error: () => void this.showMessage("The rating could not be sent.")
     });
   }
 
   private async showMessage(message: string): Promise<void> {
-    const alert = await this.alertController.create({ header: "Valoraciones", message, buttons: ["OK"] });
+    const alert = await this.alertController.create({ header: "Ratings", message, buttons: ["OK"] });
     await alert.present();
   }
 }

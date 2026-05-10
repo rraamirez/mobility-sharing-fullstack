@@ -1,15 +1,15 @@
 # Mobility Sharing Frontend Angular Ionic
 
-Frontend web independiente para Mobility Sharing, creado con Angular + Ionic.
+Standalone Mobility Sharing web frontend built with Angular and Ionic.
 
-## Desarrollo
+## Development
 
 ```bash
 npm install
 npm start
 ```
 
-La app espera el backend en:
+The app expects the backend at:
 
 ```text
 http://localhost:8080
@@ -23,16 +23,16 @@ npm run build
 
 ## Docker
 
-Desde la raiz del workspace:
+From the monorepo root:
 
 ```bash
-docker compose up -d --build
+docker compose up -d --build frontend-ionic
 ```
 
-Frontend:
+Frontend URL:
 
 ```text
 http://localhost:3000
 ```
 
-Este proyecto es independiente del frontend React Native/Expo original, que se mantiene en `../mobility-sharing-frontend`.
+This project is independent from the React Native/Expo frontend located at `../frontend-react-expo`.
