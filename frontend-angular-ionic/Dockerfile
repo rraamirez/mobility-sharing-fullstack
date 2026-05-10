@@ -1,4 +1,4 @@
-FROM mirror.gcr.io/library/node:20-alpine AS build
+FROM mirror.gcr.io/library/node:22-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
