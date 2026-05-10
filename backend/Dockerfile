@@ -5,7 +5,7 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn -B -DskipTests package
 
-FROM mirror.gcr.io/library/eclipse-temurin:21-jre
+FROM mirror.gcr.io/library/eclipse-temurin:25-jre
 WORKDIR /app
 
 RUN apt-get update \
