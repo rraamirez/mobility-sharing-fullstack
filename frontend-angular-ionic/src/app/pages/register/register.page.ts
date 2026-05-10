@@ -13,6 +13,8 @@ import {
   IonSpinner,
   IonText
 } from "@ionic/angular/standalone";
+import { I18nService } from "../../core/i18n/i18n.service";
+import { LanguageSelectorComponent } from "../../core/i18n/language-selector.component";
 import { AuthService } from "../../core/services/auth.service";
 
 @Component({
@@ -30,36 +32,38 @@ import { AuthService } from "../../core/services/auth.service";
     IonItem,
     IonLabel,
     IonSpinner,
-    IonText
+    IonText,
+    LanguageSelectorComponent
   ],
   template: `
     <ion-content>
       <main class="auth-shell">
         <ion-card>
           <ion-card-content class="stack">
-            <h1>Create Account</h1>
+            <app-language-selector></app-language-selector>
+            <h1>{{ i18n.t("auth.createAccount") }}</h1>
             <ion-item>
-              <ion-label position="stacked">Name</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.name") }}</ion-label>
               <ion-input [(ngModel)]="form.name"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Email</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.email") }}</ion-label>
               <ion-input [(ngModel)]="form.email" type="email"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Username</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.username") }}</ion-label>
               <ion-input [(ngModel)]="form.username"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Password</ion-label>
+              <ion-label position="stacked">{{ i18n.t("auth.password") }}</ion-label>
               <ion-input [(ngModel)]="form.password" type="password"></ion-input>
             </ion-item>
             <ion-button expand="block" (click)="submit()" [disabled]="loading || !isValid">
               <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-              <span *ngIf="!loading">Register</span>
+              <span *ngIf="!loading">{{ i18n.t("auth.register") }}</span>
             </ion-button>
             <ion-text color="danger" *ngIf="error">{{ error }}</ion-text>
-            <ion-button fill="clear" routerLink="/login">I already have an account</ion-button>
+            <ion-button fill="clear" routerLink="/login">{{ i18n.t("auth.alreadyHaveAccount") }}</ion-button>
           </ion-card-content>
         </ion-card>
       </main>
@@ -97,7 +101,8 @@ export class RegisterPage {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    readonly i18n: I18nService
   ) {}
 
   get isValid(): boolean {
@@ -110,7 +115,7 @@ export class RegisterPage {
     this.authService.register(this.form).subscribe({
       next: () => void this.router.navigateByUrl("/app/search"),
       error: () => {
-        this.error = "Account creation failed. Try another username or email.";
+        this.error = this.i18n.t("auth.registerFailed");
         this.loading = false;
       }
     });

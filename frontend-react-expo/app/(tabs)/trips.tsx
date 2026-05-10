@@ -16,11 +16,14 @@ import userService from "../services/userService";
 import { UserModel } from "../models/Users";
 import travelService from "../services/travelService";
 import { Ionicons } from "@expo/vector-icons";
+import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Trips() {
   const router = useRouter();
   const [view, setView] = useState("driving");
   const [user, setUser] = useState<UserModel | null>(null);
+  const { t } = useLanguage();
 
   const [myTrips, setMyTrips] = useState<TravelModel[]>([]);
   const [enrolledTrips, setEnrolledTrips] = useState<TravelModel[]>([]);
@@ -54,24 +57,23 @@ export default function Trips() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Trips</Text>
+      <LanguageSelector />
+      <Text style={styles.title}>{t("trips.title")}</Text>
 
-      <Text style={styles.motto}>
-        "Shared journeys, better tomorrows. Every ride connects a story."
-      </Text>
+      <Text style={styles.motto}>{t("trips.motto")}</Text>
 
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tabButton, view === "driving" && styles.activeTab]}
           onPress={() => setView("driving")}
         >
-          <Text style={styles.tabText}>Driving</Text>
+          <Text style={styles.tabText}>{t("trips.driving")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tabButton, view === "enrolled" && styles.activeTab]}
           onPress={() => setView("enrolled")}
         >
-          <Text style={styles.tabText}>Enrolled</Text>
+          <Text style={styles.tabText}>{t("trips.enrolled")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -91,8 +93,8 @@ export default function Trips() {
                 />
                 <Text style={styles.emptyText}>
                   {view === "driving"
-                    ? "No driving trips yet"
-                    : "No enrolled trips yet"}
+                    ? t("trips.noDriving")
+                    : t("trips.noEnrolled")}
                 </Text>
               </View>
             );

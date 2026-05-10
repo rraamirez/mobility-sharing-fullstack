@@ -3,9 +3,12 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import userService from "../services/userService";
 import { useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EcoStatsScreen() {
   const [stats, setStats] = useState<any>(null);
+  const { t } = useLanguage();
 
   useFocusEffect(
     useCallback(() => {
@@ -25,14 +28,15 @@ export default function EcoStatsScreen() {
   if (!stats) {
     return (
       <View style={styles.container}>
-        <Text style={styles.loading}>Loading stats...</Text>
+        <Text style={styles.loading}>{t("eco.loading")}</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Eco Stats</Text>
+      <LanguageSelector />
+      <Text style={styles.title}>{t("eco.title")}</Text>
       <Text style={styles.motto}>
         From the Mobility Sharing team: as an incentive to promote
         sustainability, weekly rupees are granted based on your eco-friendly
@@ -45,7 +49,7 @@ export default function EcoStatsScreen() {
           color="#00e676"
           style={styles.icon}
         />
-        <Text style={styles.subtitle}>Weekly Stats</Text>
+        <Text style={styles.subtitle}>{t("eco.weekly")}</Text>
 
         <View style={styles.card}>
           <Text style={styles.stat}>

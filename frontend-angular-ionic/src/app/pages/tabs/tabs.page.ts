@@ -10,6 +10,7 @@ import {
 } from "@ionic/angular/standalone";
 import { addIcons } from "ionicons";
 import { addCircleOutline, carOutline, personCircleOutline, searchOutline, starOutline } from "ionicons/icons";
+import { I18nService } from "../../core/i18n/i18n.service";
 
 @Component({
   selector: "app-tabs",
@@ -21,30 +22,30 @@ import { addCircleOutline, carOutline, personCircleOutline, searchOutline, starO
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="search" routerLink="/app/search">
           <ion-icon name="search-outline"></ion-icon>
-          <ion-label>Search</ion-label>
+          <ion-label>{{ i18n.t("tabs.search") }}</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="trips" routerLink="/app/trips">
           <ion-icon name="car-outline"></ion-icon>
-          <ion-label>Trips</ion-label>
+          <ion-label>{{ i18n.t("tabs.trips") }}</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="publish" routerLink="/app/publish">
           <ion-icon name="add-circle-outline"></ion-icon>
-          <ion-label>Publish</ion-label>
+          <ion-label>{{ i18n.t("tabs.publish") }}</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="ratings" routerLink="/app/ratings">
           <ion-icon name="star-outline"></ion-icon>
-          <ion-label>Ratings</ion-label>
+          <ion-label>{{ i18n.t("tabs.ratings") }}</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="profile" routerLink="/app/profile">
           <ion-icon name="person-circle-outline"></ion-icon>
-          <ion-label>Profile</ion-label>
+          <ion-label>{{ i18n.t("tabs.profile") }}</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
   `
 })
 export class TabsPage {
-  constructor() {
+  constructor(readonly i18n: I18nService) {
     addIcons({ searchOutline, carOutline, addCircleOutline, starOutline, personCircleOutline });
   }
 }

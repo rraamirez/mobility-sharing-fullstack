@@ -9,11 +9,14 @@ import {
 import { useAuth } from "./context/AuthContext";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router";
+import LanguageSelector from "./components/LanguageSelector";
+import { useLanguage } from "./context/LanguageContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -21,7 +24,7 @@ export default function Login() {
       await login(username, password);
       router.replace("/profile");
     } catch {
-      alert("Incorrect username or password");
+      alert(t("auth.invalidCredentials"));
     }
   };
 
@@ -33,21 +36,20 @@ export default function Login() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        <Text style={styles.subtitle}>
-          Redefining movement. Driving the future.
-        </Text>
+        <LanguageSelector />
+        <Text style={styles.subtitle}>{t("auth.tagline")}</Text>
         <Text style={styles.title}>Mobility Sharing</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Username"
+          placeholder={t("auth.username")}
           placeholderTextColor="#aaa"
           value={username}
           onChangeText={setUsername}
         />
         <TextInput
           style={styles.input}
-          placeholder="Password"
+          placeholder={t("auth.password")}
           placeholderTextColor="#aaa"
           value={password}
           onChangeText={setPassword}
@@ -55,13 +57,13 @@ export default function Login() {
         />
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>{t("auth.login")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.registerButton}
           onPress={handleRegister}
         >
-          <Text style={styles.registerText}>Register</Text>
+          <Text style={styles.registerText}>{t("auth.register")}</Text>
         </TouchableOpacity>
       </View>
     </>
