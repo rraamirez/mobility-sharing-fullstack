@@ -9,6 +9,15 @@ Complete Mobility Sharing monorepo.
 
 ## Quick Start
 
+Create a local `.env` file first. The repository only ships placeholders, so
+real local credentials stay out of git:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and replace every `change-me-*` value before starting Docker.
+
 ```bash
 docker compose up -d --build
 ```
@@ -71,10 +80,11 @@ npm start
 
 ## Environment Variables
 
-You can copy `.env.example` to `.env` and customize credentials if needed:
+Copy `.env.example` to `.env` and customize credentials:
 
 ```bash
 cp .env.example .env
 ```
 
-Docker Compose includes default values, so the project can run without extra configuration.
+Do not commit `.env`. It is ignored by git and should contain your real database
+passwords, JWT secret, and local admin password.

@@ -1,0 +1,46 @@
+name: Docker Build
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-build:
+    name: Build Docker images
+    runs-on: ubuntu-latest
+
+    env:
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      MYSQL_DATABASE: mobility_sharing
+      MYSQL_USER: mobility
+      MYSQL_PASSWORD: ci-db-password
+      JWT_SECRET_KEY: bW9iaWxpdHktc2hhcmluZy1jaS1qd3Qtc2VjcmV0LWZvci1kb2NrZXItYnVpbGQtMTIzNDU2
+      JWT_EXPIRATION: 86400000
+      JWT_REFRESH_TOKEN_EXPIRATION: 604800000
+      SPRING_SECURITY_USER_NAME: ci-admin
+      SPRING_SECURITY_USER_PASSWORD: ci-admin-password
+      SWAGGER_UI_PATH: /doc
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker compose build backend
+
+      - name: Build Angular/Ionic image
+        run: docker compose build frontend-ionic
+
+      - name: Build React/Expo web image
+        run: docker compose build frontend-react

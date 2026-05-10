@@ -1,0 +1,64 @@
+name: CodeQL
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - master
+      - main
+  schedule:
+    - cron: "22 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze Java and TypeScript
+    runs-on: ubuntu-latest
+
+    env:
+      DB_URL: jdbc:mysql://127.0.0.1:3306/mobility_sharing?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      DB_USERNAME: mobility
+      DB_PASSWORD: codeql-db-password
+      DB_DRIVER_CLASS: com.mysql.cj.jdbc.Driver
+      JWT_SECRET_KEY: bW9iaWxpdHktzaGFyaW5nLWNvZGVxbC1qd3Qtc2VjcmV0LWZvci1hbmFseXNpcy0xMjM0NTY=
+      JWT_EXPIRATION: 86400000
+      JWT_REFRESH_TOKEN_EXPIRATION: 604800000
+      SPRING_SECURITY_USER_NAME: codeql-admin
+      SPRING_SECURITY_USER_PASSWORD: codeql-admin-password
+      SWAGGER_UI_PATH: /doc
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java,javascript-typescript
+
+      - name: Make Maven wrapper executable
+        working-directory: backend
+        run: chmod +x ./mvnw
+
+      - name: Build backend for CodeQL
+        working-directory: backend
+        run: ./mvnw -DskipTests package
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
